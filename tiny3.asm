@@ -1,4 +1,5 @@
 bits 64
+filesize equ 0x200
 ; mach_header_64
 
 _header:
@@ -35,7 +36,7 @@ _load_command_2:
 	dq 0x1000     ; vmaddr
 	dq 0x1000     ; vmsize
     dq 0x0        ; fileoff
-	dq 0x1000     ; filesize
+	dq filesize   ; filesize
 	dd 0x7        ; maxprot -> read, write, execute
 	dd 0x5        ; initprot -> VM_PROT_READ(0x1) | VM_PROT_EXECUTE(0x4)
 	dd 0x1        ; nsects
@@ -44,9 +45,9 @@ _load_command_2:
 _section_1:
     db "__text",0,0,0,0,0,0,0,0,0,0 ; sectname -> __text
     db "__TEXT",0,0,0,0,0,0,0,0,0,0 ; segname -> __TEXT
-    dq 0x1fd1       ; addr
-	dq 0x2f         ; size
-    dd 0x0fd1       ; offset
+    dq _program+0x1000 ; addr
+	dq proglen      ; size
+    dd _program     ; offset
     dd 0x0          ; align
     dd 0x0          ; reloff
     dd 0x0          ; nreloc
@@ -61,11 +62,11 @@ _load_command_6:
 	dd 0x4        ; flavour
 	dd 0x2a       ; count
 times 16 dq 0x0   ; zero all general purpose registers r0 to r15
-    dq 0x1fd1     ; rip
+    dq _program+0x1000 ; rip
 times 4 dq 0x0    ; zero rflags, cs, fs, gs
 
 _load_end:
-times 4096-($-_header)-(_end-_program) db 0x0 ; pad to 4096 bytes
+times filesize-($-_header)-(_end-_program) db 0x0 ; pad to 4096 bytes
 
 _program:
     mov rdi, 1
@@ -82,3 +83,4 @@ _hw:
 
 len equ $-_hw
 _end:
+proglen equ _end-_program
