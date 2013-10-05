@@ -1,3 +1,4 @@
+bits 64
 ; mach_header_64
 
 _header:
@@ -91,15 +92,14 @@ _load_command_6:
 	dd 0xb8       ; cmdsize -> sizeof(thread_command)
 	dd 0x4        ; flavour
 	dd 0x2a       ; count
-	times 128 db 0x0 ; zero all general purpose registers
-	db 0xd1
-	db 0x1f
-	times 3479 db 0x0
+times 16 dq 0x0   ; zero all general purpose registers r0 to r15
+    dq 0x1fd1     ; rip
+times 4 dq 0x0    ; zero rflags, cs, fs, gs
+times 4096-($-_header)-(_end-_program) db 0x0 ; pad to 4096 bytes
 
-bits 64
 _program:
     mov rdi, 1
-    mov rsi, hw+0x1000 ; program is loaded at 0x1000
+    mov rsi, _hw+0x1000 ; program is loaded at 0x1000
     mov rdx, len
     mov eax, 0x2000004
     syscall
@@ -107,6 +107,8 @@ _program:
     mov eax, 0x2000001
     syscall
     ret
-hw:
+_hw:
     db "hello world", 0xa
-len equ $-hw
+
+len equ $-_hw
+_end:
