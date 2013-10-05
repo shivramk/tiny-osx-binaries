@@ -6,10 +6,12 @@ _header:
     dd 0x01000007 ; cputype -> 0x01000000 (CPU_ARCH_ABI64) | 0x7 (CPU_TYPE_I386)
     dd 0x3        ; cpusubtype -> CPU_SUBTYPE_X86_64_ALL
 	dd 0x2        ; filetype -> MH_EXECUTE
-	dd 0x6        ; ncmds
-	dd 0x240      ; sizeofcmds
+	dd 0x3        ; ncmds
+	dd cmdsize    ; sizeofcmds
 	dd 0x1        ; flags
     dd 0x0        ; reserved
+
+cmdsize equ _load_end - _load_start
 
 _load_start:
 
@@ -53,40 +55,6 @@ _section_1:
 	dd 0x0          ; reserved2
 	dd 0x0          ; reserved3
 
-_load_command_3:
-	dd 0x19       ; cmd -> LC_SEGMENT_64
-	dd 0x48       ; cmdsize -> sizeof(segment_command_64)
-    db "__DATA",0,0,0,0,0,0,0,0,0,0 ; segname -> __DATA
-    dq 0x2000     ; vmaddr
-    dq 0x0        ; vmsize
-	dq 0x1000     ; fileoff
-	dq 0x0        ; filesize
-	dd 0x7        ; maxprot -> read, write, execute
-	dd 0x3        ; initprot -> VM_PROT_READ(0x1) | VM_PROT_WRITE(0x2)
-	dd 0x0        ; nsects
-    dd 0x0        ; flags
-
-_load_command_4:
-	dd 0x19       ; cmd -> LC_SEGMENT_64
-	dd 0x48       ; cmdsize -> sizeof(segment_command_64)
-    db "__LINKEDIT",0,0,0,0,0,0 ; segname -> __LINKEDIT
-    dq 0x2000     ; vmaddr
-    dq 0x0        ; vmsize
-	dq 0x1000     ; fileoff
-	dq 0x0        ; filesize
-	dd 0x7        ; maxprot -> read, write, execute
-	dd 0x1        ; initprot -> VM_PROT_READ(0x1)
-	dd 0x0        ; nsects
-    dd 0x0        ; flags
-
-_load_command_5:
-	dd 0x02       ; cmd -> LC_SYMTAB
-	dd 0x18       ; cmdsize -> sizeof(symtab_command)
-    dd 0x0        ; symoff
-    dd 0x0        ; nsyms
-    dd 0x0        ; stroff
-    dd 0x0        ; strsize
-
 _load_command_6:
 	dd 0x05       ; cmd -> LC_UNIXTHREAD
 	dd 0xb8       ; cmdsize -> sizeof(thread_command)
@@ -95,6 +63,8 @@ _load_command_6:
 times 16 dq 0x0   ; zero all general purpose registers r0 to r15
     dq 0x1fd1     ; rip
 times 4 dq 0x0    ; zero rflags, cs, fs, gs
+
+_load_end:
 times 4096-($-_header)-(_end-_program) db 0x0 ; pad to 4096 bytes
 
 _program:
