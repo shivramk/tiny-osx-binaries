@@ -1,4 +1,4 @@
-all: tiny1 tiny2 tiny3
+all: tiny1 tiny2 tiny3 tiny3.32
 
 tiny1: tiny1.c
 	clang -Os -o tiny1 tiny1.c
@@ -13,5 +13,9 @@ tiny3: tiny3.asm
 	nasm -f bin -o tiny3 tiny3.asm
 	chmod +x tiny3
 
+tiny3.32: tiny3.32.asm
+	nasm -f bin -o tiny3.32 tiny3.32.asm
+	chmod +x tiny3.32
+
 clean:
-	rm -f tiny1 tiny2.o tiny2 tiny3
+	rm -f tiny1 tiny2.o tiny2 tiny3 tiny4

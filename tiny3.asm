@@ -45,5 +45,4 @@ _program:
     syscall
 _end:
 
-proglen equ _end-_program
 filesize equ _end-_header
