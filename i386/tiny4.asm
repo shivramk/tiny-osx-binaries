@@ -1,7 +1,6 @@
 bits 32
 
 ; mach_header
-_header:
     dd 0xfeedface ; magic
     dd 0x7        ; cputype -> 0x7 (CPU_TYPE_I386)
     dd 0x3        ; cpusubtype -> CPU_SUBTYPE_I386_ALL
@@ -49,12 +48,12 @@ _program:
     inc eax
     push byte 0
     int 0x80
-_programend:
 
-    times 40-(_programend-_program) db 0 ; pad to 40 bytes
+    times 40-($-_program) db 0 ; pad to 40 bytes
 
     dd _program   ; eip
     times 5 dd 0  ; state
 
 _load_end:
-filesize equ _load_end-_header
+
+filesize equ $-$$

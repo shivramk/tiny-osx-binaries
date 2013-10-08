@@ -1,13 +1,12 @@
 bits 32
-; mach_header
 
-_header:
+; mach_header
     dd 0xfeedface ; magic
     dd 0x7        ; cputype -> 0x7 (CPU_TYPE_I386)
     dd 0x3        ; cpusubtype -> CPU_SUBTYPE_X86_64_ALL
     dd 0x2        ; filetype -> MH_EXECUTE
     dd 0x2        ; ncmds
-    dd _load_end - _load_start ; sizeofcmds
+    dd _load_end-_load_start ; sizeofcmds
     dd 0x5        ; flags -> MH_NOUNDEFS(1) | MH_DYLDLINK(4)
 
 _load_start:
