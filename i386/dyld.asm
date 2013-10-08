@@ -25,4 +25,4 @@ _next:
 
 hw:
     db 'hello world', 0xa
-len equ $-hw
+    len equ $-hw
